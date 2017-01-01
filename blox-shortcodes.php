@@ -127,25 +127,44 @@ function blox_load_shortcodes_addon() {
             // Add shortcode settings
             add_action( 'blox_position_settings', array( $this, 'add_shortcode_settings' ), 10, 4 );
 
+            //
             add_filter( 'blox_position_formats', array( $this, 'add_position_formats' ) );
 
+            //
+            add_filter( 'blox_admin_column_output_position', array( $this, 'admin_column_output' ), 10, 4 );
+
+            //
             add_shortcode( 'blox', array( $this, 'add_shortcode' ) );
         }
 
+        public function admin_column_output( $output, $position_format, $post_id, $block_data ) {
+
+            if ( $position_format == 'shortcode' ) {
+                return '<div class="shortcode-display">[blox id="global_' . $post_id .'"]</div>';
+            }
+        }
+
+
         public function add_shortcode( $atts ) {
+
+            $output = "Testing 1 2 3";
 
             $atts = shortcode_atts( array(
                 'id' => ''
             ), $atts );
 
-            //$id = ! empty( $atts['id'] ) ? esc_attr( $atts['id'] ) : return;
+            if ( ! empty( $atts['id'] ) ) {
+                $id = esc_attr( $atts['id'] );
+            } else {
+                return;
+            }
 
             $scope = '';
 
             // Define the scope
-            if ( strpos( $id, 'global' ) ) {
+            if ( strpos( $id, 'global' ) !== false ) {
                 $scope = 'global';
-            } else if ( strpos( $id, 'local' ) ) {
+            } else if ( strpos( $id, 'local' ) !== false ) {
                 $scope = 'local';
             } else {
                 return;
@@ -161,12 +180,20 @@ function blox_load_shortcodes_addon() {
 
             }
 
+            $block_atts = apply_filters( 'blox_content_block_position_shortcode', array() );
+
+            $test_id = ! empty( $block_atts ) ? $block_atts[0] : '';
+
+            if ( $test_id == $id ) {
+                $output = 'This is working';
+            }
+
             // Use display filter for location and visibility
             // Make sure to get active block types
             // Add in styles
             // Pass content through content builder
 
-            return '';
+            return $output;
 
         }
 
@@ -177,7 +204,7 @@ function blox_load_shortcodes_addon() {
             $block = get_post( $id );
             //$slug = $block->post_name;
             ?>
-            <table class="form-table blox-position-format shortcode">
+            <table class="form-table blox-position-format-type shortcode">
                 <tbody>
                     <tr>
                         <th scope="row"><?php echo __( 'Shortcode', 'blox' ); ?></th>
@@ -195,7 +222,7 @@ function blox_load_shortcodes_addon() {
                             </style>
                             <div class="shortcode-display">[blox id="<?php echo $scope . '_' . $id; ?>"]</div>
                             <div class="blox-description">
-                                Copy and paste this above shortcode into anywhere that accepts a shortcode.
+                                Copy and paste this above shortcode anywhere that accepts a shortcode.
                             </div>
                         </td>
                     </tr>

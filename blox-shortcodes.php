@@ -114,13 +114,6 @@ function blox_load_shortcodes_addon() {
 			// Initialize addon's license settings field
 			add_action( 'init', array( $this, 'license_init' ) );
 
-			// Run sandbox content
-			//add_action( 'init', array( $this, 'run_sandbox_content' ) );
-
-			// Configure and setup the Sandox settings tab and content
-			add_filter( 'blox_settings_tabs', array( $this, 'add_sandbox_tab' ) );
-			add_filter( 'blox_registered_settings', array( $this, 'add_sandbox_settings' ) );
-
 			// Let Blox know the addon is active
 			add_filter( 'blox_get_active_addons', array( $this, 'notify_of_active_addon' ), 10 );
 
@@ -133,33 +126,34 @@ function blox_load_shortcodes_addon() {
             //
             add_filter( 'blox_admin_column_output_position', array( $this, 'admin_column_output' ), 10, 4 );
 
-            //
-            add_shortcode( 'blox', array( $this, 'add_shortcode' ) );
-        }
-
-        public function admin_column_output( $output, $position_format, $post_id, $block_data ) {
-
-            if ( $position_format == 'shortcode' ) {
-                return '<div class="shortcode-display">[blox id="global_' . $post_id .'"]</div>';
-            }
+            // Add the blox shortcode
+            add_shortcode( 'blox', array( $this, 'display_shortcode' ) );
         }
 
 
-        public function add_shortcode( $atts ) {
+        /**
+		 * Display the shortcode content if tests are passed
+		 *
+		 * @since 1.0.0
+         *
+         * @param array $atts All of the accepted shortcode atts
+         *
+         * @return string     The block output
+		 */
+        public function display_shortcode( $atts ) {
 
-            $output = "Testing 1 2 3";
-
+            // The accepted shortcode atts
             $atts = shortcode_atts( array(
-                'id' => ''
+                'id'    => '',
+                'title' => '', // The Title does not currently do anything, just helps the user remember what the shortcode is
             ), $atts );
 
+            // Check if there is an id specified
             if ( ! empty( $atts['id'] ) ) {
                 $id = esc_attr( $atts['id'] );
             } else {
                 return;
             }
-
-            $scope = '';
 
             // Define the scope
             if ( strpos( $id, 'global' ) !== false ) {
@@ -171,38 +165,83 @@ function blox_load_shortcodes_addon() {
             }
 
             // Trim the id to remove the scope
-            $id = substr( $id, strlen( $scope ) );
+            $id = substr( $id, strlen( $scope ) + 1 );
 
-            if ( $scope == 'global' && blox_get_option( 'global_enable', false ) ) {
+            // Get the global and local enable flags
+            $global_enable = blox_get_option( 'global_enable', false );
+            $local_enable  = blox_get_option( 'local_enable', false );
 
+            // Get the block data
+            if ( $scope == 'global' &&  $global_enable ) {
 
-            } else if ( $scope == 'local' && blox_get_option( 'local_enable', false ) ) {
+                $block  = get_post_meta( $id, '_blox_content_blocks_data', true );
+                $global = true;
 
+                // If there is no block associated with the id given, bail
+                if ( empty( $block ) ) {
+                    return;
+                }
+
+            } else if ( $scope == 'local' && $local_enable && is_singular() ) {
+
+                // Local blocks only run on singular pages, so make sure it is a singular page before proceding and also that local blocks are enabled
+
+                // Get the post type of the current page, and our array of enabled post types
+                $post_type     = get_post_type( get_the_ID() );
+                $enabled_pages = blox_get_option( 'local_enabled_pages', '' );
+                $global 	   = false;
+
+                // Make sure local blocks are allowed on this post type
+                if ( ! empty( $enabled_pages ) && in_array( $post_type, $enabled_pages ) ) {
+
+                    // Get all of the Local Content Blocks
+                    $local_blocks = get_post_meta( get_the_ID(), '_blox_content_blocks_data', true );
+
+                    // Get the block data, and if there is no local block with that id, bail
+                    if ( ! empty( $local_blocks[$id] ) ) {
+                        $block = $local_blocks[$id];
+                    } else {
+                        return;
+                    }
+                }
+            } else {
+                return;
             }
 
-            $block_atts = apply_filters( 'blox_content_block_position_shortcode', array() );
+            // The display test begins as true
+            $display_test = true;
 
-            $test_id = ! empty( $block_atts ) ? $block_atts[0] : '';
+            // Let all available tests filter the test parameter
+            $display_test = apply_filters( 'blox_display_test', $display_test, $id, $block, $global );
 
-            if ( $test_id == $id ) {
-                $output = 'This is working';
+            // If the test parameter is still true, proceed with block positioning
+            if ( $display_test == true ) {
+
+                // We need to use output buffering here to ensure the slider content is contained in the wrapper div
+                ob_start();
+                blox_frontend_content( null, array( $id, $block, $global ) );
+                $output = ob_get_clean();
+
+                return $output;
             }
-
-            // Use display filter for location and visibility
-            // Make sure to get active block types
-            // Add in styles
-            // Pass content through content builder
-
-            return $output;
-
         }
 
 
+        /**
+         * Add the shortcode settings to the Position tab
+         *
+         * @since 1.0.0
+         *
+         * @param int $id             The block id
+         * @param string $name_prefix The prefix for saving each setting
+         * @param string $get_prefix  The prefix for retrieving each setting
+         * @param bool $global        The block state
+         */
         public function add_shortcode_settings( $id, $name_prefix, $get_prefix, $global ) {
 
             $scope = $global ? "global" : 'local';
             $block = get_post( $id );
-            //$slug = $block->post_name;
+
             ?>
             <table class="form-table blox-position-format-type shortcode">
                 <tbody>
@@ -222,7 +261,7 @@ function blox_load_shortcodes_addon() {
                             </style>
                             <div class="shortcode-display">[blox id="<?php echo $scope . '_' . $id; ?>"]</div>
                             <div class="blox-description">
-                                Copy and paste this above shortcode anywhere that accepts a shortcode.
+                                <?php _e( 'Copy and paste this above shortcode anywhere that accepts a shortcode. Note that the block will still respect the visibility and location settings even when added as a shortcode.', 'blox-shortcodes' ); ?>
                             </div>
                         </td>
                     </tr>
@@ -231,14 +270,42 @@ function blox_load_shortcodes_addon() {
             <?php
         }
 
+
+        /**
+         * Preview the shortcode in the global block position admin column
+         *
+         * @since 1.0.0
+         *
+         * @param string $output          What we want to show in the admin column
+         * @param string $position_format The position format
+         * @param string $id              The block id
+         * @param array $block_data       Array of all block data
+         *
+         * @return string                 A preview of the shortcode
+         */
+        public function admin_column_output( $output, $position_format, $id, $block_data ) {
+
+            if ( $position_format == 'shortcode' ) {
+                return '<div class="shortcode-display">[blox id="global_' . $id .'" title="' . get_the_title( $id ) . '"]</div>';
+            }
+        }
+
+
+        /**
+         * Add the shortcode position format
+         *
+         * @since 1.0.0
+         *
+         * @param array $formats  Array of all custom position formats
+         *
+         * @return array $formats An update array of formats with shortcode added
+         */
         public function add_position_formats( $formats ) {
 
             $formats['shortcode'] = __( 'Shortcode', 'blox' );
 
             return $formats;
         }
-
-
 
 
 		/**
@@ -295,82 +362,8 @@ function blox_load_shortcodes_addon() {
 
 			// Setup the license
 			if ( class_exists( 'Blox_License' ) ) {
-				$blox_sandbox_addon_license = new Blox_License( __FILE__, 'Sandbox Addon', '1.0.0', 'Nicholas Diego', 'blox_shortcodes_addon_license_key', 'https://www.bloxwp.com', 'addons' );
+				$blox_sandbox_addon_license = new Blox_License( __FILE__, 'Shortcodes Addon', '1.0.0', 'Nicholas Diego', 'blox_shortcodes_addon_license_key', 'https://www.bloxwp.com', 'addons' );
 			}
-		}
-
-
-		/**
-		 * Loads all of the custom sandbox php
-		 *
-		 * @since 1.0.0
-		 */
-		public function run_sandbox_content() {
-
-			//$content 	  = blox_get_option( 'sandbox_content', '' );
-
-
-			// If we have PHP content and it is not disabled, continue...
-			if ( ! empty( $content ) && ! $disable ) {
-				if ( is_admin() && ! $enable_admin ) {
-					return;
-				} else {
-					eval( $content ); // Potentially very dangerous, users need to use with caution!
-				}
-			}
-		}
-
-
-		/**
-		 * Add the Sandbox tab to the Blox settings page
-		 *
-		 * @since 1.0.0
-		 */
-		public function add_sandbox_tab( $tabs ) {
-
-			$tabs['sandbox'] = __( 'Sandbox', 'blox-sandbox' );
-
-			return $tabs;
-		}
-
-
-		/**
-		 * Add the Sandbox settings to the new Sandbox tab
-		 *
-		 * @since 1.0.0
-		 */
-		public function add_sandbox_settings( $settings ) {
-
-			$settings['sandbox'] = array(
-				'sandbox_content' => array(
-					'id'   		  => 'sandbox_content',
-					'name' 	 	  => __( 'Sandbox Custom PHP', 'blox-sandbox' ),
-					'placeholder' => __( 'With great power there must also come — great responsibility... It is highly recommended that you review the Sandbox documentation prior to use.', 'blox-sandbox' ),
-					'desc' 		  => sprintf( __( 'For additional information on how to effectively use the Sandbox, please check out the %1$sSandbox Documentation%2$s.', 'blox-sandbox' ), '<a href="https://www.bloxwp.com/documentation/sandbox" target="_blank">', '</a>' ),
-					'type' 		  => 'textarea',
-					'class' 	  => 'blox-textarea-code',
-					'size' 		  => 20,
-					'default' 	  => '',
-				),
-				'sandbox_disable_content' => array(
-					'id'    	  => 'sandbox_disable_content',
-					'name'  	  => __( 'Disable Custom PHP', 'blox' ),
-					'label' 	  => __( 'Disable all custom PHP', 'blox-sandbox' ),
-					'desc'  	  => __( 'Quickly and easily disable your custom PHP code without having to delete it.', 'blox-sandbox' ),
-					'type'  	  => 'checkbox',
-					'default'	  => '',
-				),
-				'sandbox_enable_admin' => array(
-					'id'    	  => 'sandbox_enable_admin',
-					'name'  	  => __( 'Run on Admin', 'blox' ),
-					'label' 	  => __( 'Run custom PHP on the frontend and admin', 'blox-sandbox' ),
-					'desc'  	  => sprintf( __( 'With this option unchecked, Sandbox custom PHP is only run on the frontend. So if you break something, you can always head back to this page and make the necessary changes. However, there are many functions you may want to run that need access to the admin, such as adding/removing Genesis layout configurations, widget areas, etc. These functions will not work correctly unless this box is checked. But if you check, your custom PHP code is run at all times, meaning that if you don\'t know what you doing, you can easily break both the frontend and backend of your site. %1$sYou have been warned%2$s.', 'blox-sandbox' ), '<strong>', '</strong>' ),
-					'type'  	  => 'checkbox',
-					'default'	  => '',
-				)
-			);
-
-			return $settings;
 		}
 
 

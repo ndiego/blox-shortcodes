@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Blox - Shortcodes Add-on
+ * Plugin Name: Blox - Shortcodes Addon
  * Plugin URI:  https://www.bloxwp.com
- * Description: Enables the Shortcodes Add-on for Blox
+ * Description: Enables the Shortcodes Addon for Blox
  * Author:      Nick Diego
  * Author URI:  https://www.outermost.co
  * Version:     1.0.0
@@ -29,6 +29,30 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+// Make sure that Genesis is active before enabling the plugin
+register_activation_hook( __FILE__ , 'blox_shortcodes_activation_check' );
+
+/**
+ * This function runs on plugin activation. It checks to make sure the required
+ * minimum Blox version is installed. If not, it deactivates the plugin.
+ *
+ * @since 1.0.0
+ */
+function blox_shortcodes_activation_check() {
+
+    if ( ! class_exists( 'Blox_Main' ) || class_exists( 'Blox_Shortcodes_Main' ) ) {
+        deactivate_plugins( plugin_basename( __FILE__ ) ); // Deactivate plugin
+        wp_die( sprintf( __( 'Sorry, you can\'t activate %1$sBlox Shortcodes%2$s unless you have Blox installed. Go back to the %3$sPlugins Page%4$s.', 'blox-shortcodes' ), '<em>', '</em>', '<a href="javascript:history.back()">', '</a>' ) );
+    }
+
+    $blox_version = Blox_Main::get_instance()->version;
+
+    if ( version_compare( $blox_version, '1.3.1', '<' ) ) {
+        deactivate_plugins( plugin_basename( __FILE__ ) ); // Deactivate plugin
+        wp_die( sprintf( __( 'Sorry, you can\'t activate %1$sBlox Shortcodes%2$s unless you have Blox v1.3.1+ installed. You are currently running Blox v%3$s. Go back to the %4$sPlugins Page%5$s.', 'blox-shortcodes' ), '<em>', '</em>', $blox_version, '<a href="javascript:history.back()">', '</a>' ) );
+    }
+}
+
 
 add_action( 'plugins_loaded', 'blox_load_shortcodes_addon' );
 /**
@@ -41,7 +65,13 @@ function blox_load_shortcodes_addon() {
 	// If Blox is not active or if the addon class already exists, bail...
 	if ( ! class_exists( 'Blox_Main' ) || class_exists( 'Blox_Shortcodes_Main' ) ) {
 		return;
-	}
+	} else {
+        $blox_version = Blox_Main::get_instance()->version;
+
+        if ( version_compare( $blox_version, '1.3.1', '<' ) ) {
+            return;
+        }
+    }
 
 	/**
 	 * Main plugin class.
@@ -78,7 +108,7 @@ function blox_load_shortcodes_addon() {
 		 *
 		 * @var string
 		 */
-		public $plugin_name = 'Blox - Sandbox Add-on';
+		public $plugin_name = 'Blox - Sandbox Addon';
 
 		/**
 		 * Unique plugin slug identifier.
@@ -208,6 +238,12 @@ function blox_load_shortcodes_addon() {
                 return;
             }
 
+            // Check to make sure the position format it set to shortcode, and if not, don't show the content
+            $position_format = ! empty( $block['position']['position_format'] ) ? esc_attr( $block['position']['position_format'] ) : '';
+            if ( $position_format != 'shortcode' ) {
+                return;
+            }
+
             // The display test begins as true
             $display_test = true;
 
@@ -242,27 +278,26 @@ function blox_load_shortcodes_addon() {
             $scope = $global ? "global" : 'local';
             $block = get_post( $id );
 
+            $style = 'width: 100%;padding: 10px;background-color: #fafafa;border: 1px solid #dfdfdf;box-sizing: border-box;font-family: Menlo, Consolas, \'DejaVu Sans Mono\', monospace;margin-bottom: 15px;';
+
             ?>
             <table class="form-table blox-position-format-type shortcode">
                 <tbody>
                     <tr>
                         <th scope="row"><?php echo __( 'Shortcode', 'blox' ); ?></th>
                         <td>
-                            <style>
-                            .shortcode-display {
-                                width: 100%;
-                                padding: 10px;
-                                background-color: #fafafa;
-                                border: 1px solid #dfdfdf;
-                                box-sizing: border-box;
-                                font-family: Menlo, Consolas, 'DejaVu Sans Mono', monospace;
-                                margin-bottom: 15px;
-                            }
-                            </style>
-                            <div class="shortcode-display">[blox id="<?php echo $scope . '_' . $id; ?>"]</div>
+                            <div class="shortcode-display" style="<?php echo $style;?>">[blox id="<?php echo $scope . '_' . $id; ?>"]</div>
                             <div class="blox-description">
-                                <?php _e( 'Copy and paste this above shortcode anywhere that accepts a shortcode. Note that the block will still respect the visibility and location settings even when added as a shortcode.', 'blox-shortcodes' ); ?>
+                                <?php
+                                    _e( 'Copy and paste this above shortcode anywhere that accepts a shortcode. Visibility and location settings are respected when using shortcode positioning.', 'blox-shortcodes' );
+                                    if ( ! $global ) {
+                                        echo ' ' . sprintf( __( 'Also note that regardless of position type, local blocks will %1$sonly%2$s display on the page, post, or custom post type that they were created on.', 'blox-shortcodes' ), '<strong>', '</strong>' );
+                                    }
+                                ?>
                             </div>
+                            <?php
+
+                            ?>
                         </td>
                     </tr>
                 </tbody>
@@ -286,7 +321,7 @@ function blox_load_shortcodes_addon() {
         public function admin_column_output( $output, $position_format, $id, $block_data ) {
 
             if ( $position_format == 'shortcode' ) {
-                return '<div class="shortcode-display">[blox id="global_' . $id .'" title="' . get_the_title( $id ) . '"]</div>';
+                return '<div class="shortcode-display" style="font-family: Menlo, Consolas, \'DejaVu Sans Mono\', monospace;">[blox id="global_' . $id .'"]</div>';
             }
         }
 

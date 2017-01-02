@@ -1,12 +1,12 @@
 <?php
 /**
- * Plugin Name: Blox - Shortcodes Addon
+ * Plugin Name: Blox - Shortcode Positioning Add-on
  * Plugin URI:  https://www.bloxwp.com
- * Description: Enables the Shortcodes Addon for Blox
+ * Description: Enables the Shortcode Positioning Add-on for Blox
  * Author:      Nick Diego
  * Author URI:  https://www.outermost.co
  * Version:     1.0.0
- * Text Domain: blox-sandbox
+ * Text Domain: blox-shortcodes
  * Domain Path: languages
  *
  * Blox is free software: you can redistribute it and/or modify
@@ -42,14 +42,14 @@ function blox_shortcodes_activation_check() {
 
     if ( ! class_exists( 'Blox_Main' ) || class_exists( 'Blox_Shortcodes_Main' ) ) {
         deactivate_plugins( plugin_basename( __FILE__ ) ); // Deactivate plugin
-        wp_die( sprintf( __( 'Sorry, you can\'t activate %1$sBlox Shortcodes%2$s unless you have Blox installed. Go back to the %3$sPlugins Page%4$s.', 'blox-shortcodes' ), '<em>', '</em>', '<a href="javascript:history.back()">', '</a>' ) );
+        wp_die( sprintf( __( 'Sorry, you can\'t activate the %1$sShortcodes Positioning Add-on%2$s unless you have Blox installed. Go back to the %3$sPlugins Page%4$s.', 'blox-shortcodes' ), '<em>', '</em>', '<a href="javascript:history.back()">', '</a>' ) );
     }
 
     $blox_version = Blox_Main::get_instance()->version;
 
     if ( version_compare( $blox_version, '1.3.1', '<' ) ) {
         deactivate_plugins( plugin_basename( __FILE__ ) ); // Deactivate plugin
-        wp_die( sprintf( __( 'Sorry, you can\'t activate %1$sBlox Shortcodes%2$s unless you have Blox v1.3.1+ installed. You are currently running Blox v%3$s. Go back to the %4$sPlugins Page%5$s.', 'blox-shortcodes' ), '<em>', '</em>', $blox_version, '<a href="javascript:history.back()">', '</a>' ) );
+        wp_die( sprintf( __( 'Sorry, you can\'t activate %1$sShortcodes Positioning Add-on%2$s unless you have Blox v1.3.1+ installed. You are currently running Blox v%3$s. Go back to the %4$sPlugins Page%5$s.', 'blox-shortcodes' ), '<em>', '</em>', $blox_version, '<a href="javascript:history.back()">', '</a>' ) );
     }
 }
 
@@ -108,7 +108,7 @@ function blox_load_shortcodes_addon() {
 		 *
 		 * @var string
 		 */
-		public $plugin_name = 'Blox - Sandbox Addon';
+		public $plugin_name = 'Blox - Shortcode Positioning Add-on';
 
 		/**
 		 * Unique plugin slug identifier.
@@ -117,7 +117,7 @@ function blox_load_shortcodes_addon() {
 		 *
 		 * @var string
 		 */
-		public $plugin_slug = 'blox-sandbox';
+		public $plugin_slug = 'blox-shortcodes';
 
 		/**
 		 * Plugin file.
@@ -141,7 +141,7 @@ function blox_load_shortcodes_addon() {
 			// Add additional links to the plugin's row on the admin plugin page
 			add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
 
-			// Initialize addon's license settings field
+			// Initialize add-on's license settings field
 			add_action( 'init', array( $this, 'license_init' ) );
 
 			// Let Blox know the addon is active
@@ -375,7 +375,7 @@ function blox_load_shortcodes_addon() {
 					'utm_medium'   => 'plugin',
 					'utm_campaign' => 'BloxPluginsPage',
 					'utm_content'  => 'plugin-page-link'
-				), 'https://www.bloxwp.com/documentation/shortcodes' )
+				), 'https://www.bloxwp.com/documentation/shortcode-positioning' )
 			);
 
 			$new_links = array(
@@ -397,19 +397,19 @@ function blox_load_shortcodes_addon() {
 
 			// Setup the license
 			if ( class_exists( 'Blox_License' ) ) {
-				$blox_sandbox_addon_license = new Blox_License( __FILE__, 'Shortcodes Addon', '1.0.0', 'Nicholas Diego', 'blox_shortcodes_addon_license_key', 'https://www.bloxwp.com', 'addons' );
+				$blox_shortcodes_addon_license = new Blox_License( __FILE__, 'Shortcodes Positioning Addon', '1.0.0', 'Nicholas Diego', 'blox_shortcodes_addon_license_key', 'https://www.bloxwp.com', 'addons' );
 			}
 		}
 
 
 		/**
-		 * Let Blox know this addon has been activated.
+		 * Let Blox know this add-on has been activated.
 		 *
 		 * @since 1.0.0
 		 */
 		public function notify_of_active_addon( $addons ) {
 
-			$addons['shortcodes_addon'] = __( 'Shortcodes Addon', 'blox-shortcodes' );
+			$addons['shortcodes_addon'] = __( 'Shortcode Positioning Add-on', 'blox-shortcodes' );
 			return $addons;
 		}
 

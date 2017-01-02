@@ -1,6 +1,6 @@
 ## Shortcodes Addon – A premium extension for Blox
 
-The Shortcodes Addon is an extension of the premium Wordpress plugin Blox. More information on Blox can be found at [www.bloxwp.com](https://www.bloxwp.com/documentation/?utm_source=blox-shortcodes&utm_medium=plugin&utm_content=github-readme-links&utm_campaign=Blox_Addon_Links). You are free to download and use this extension, but understand that automatic updates and support require a paid Blox license. 
+The Shortcodes Addon is an extension of the premium Wordpress plugin Blox. More information on Blox can be found at [www.bloxwp.com](https://www.bloxwp.com/documentation/?utm_source=blox-shortcodes&utm_medium=plugin&utm_content=github-readme-links&utm_campaign=Blox_Addon_Links). You are free to download and use this extension, but understand that automatic updates and support require a paid Blox license.
 
 **Please Note:** This extension will not work with [Blox Lite](https://wordpress.org/support/plugin/blox-lite), the free version of Blox.
 
@@ -14,3 +14,8 @@ There are a number of ways you can get help with the Shortcodes Addon:
 ### Find a bug or have a feature request?
 
 We would love to hear from you! If you find a bug or have a feature request, please send in a support ticket through [Your Account](https://www.bloxwp.com/your-account/?utm_source=blox-shortcodes&utm_medium=plugin&utm_content=github-readme-links&utm_campaign=Blox_Addon_Links). Or better yet, add it to the [issue tracker](https://github.com/ndiego/blox-shortcodes/issues) here on Github. Either way, please be clear and detailed in you communication. If submitting a bug, be sure to provide instructions on how to replicate the issue you are having. Also provide the theme name and PHP version if possible.
+
+### Changelog
+
+##### Version 1.0.0 – 2017-01-02
+* Initial Release

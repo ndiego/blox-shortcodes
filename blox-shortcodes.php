@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Blox - Shortcode Positioning Add-on
+ * Plugin Name: Blox - Shortcodes Add-on
  * Plugin URI:  https://www.bloxwp.com
- * Description: Enables the Shortcode Positioning Add-on for Blox
+ * Description: Enables the Shortcode Add-on for Blox, which enables shortcode positioning
  * Author:      Nick Diego
  * Author URI:  https://www.outermost.co
  * Version:     1.0.0
@@ -42,14 +42,14 @@ function blox_shortcodes_activation_check() {
 
     if ( ! class_exists( 'Blox_Main' ) || class_exists( 'Blox_Shortcodes_Main' ) ) {
         deactivate_plugins( plugin_basename( __FILE__ ) ); // Deactivate plugin
-        wp_die( sprintf( __( 'Sorry, you can\'t activate the %1$sShortcodes Positioning Add-on%2$s unless you have Blox installed. Go back to the %3$sPlugins Page%4$s.', 'blox-shortcodes' ), '<em>', '</em>', '<a href="javascript:history.back()">', '</a>' ) );
+        wp_die( sprintf( __( 'Sorry, you can\'t activate the %1$sShortcodes Add-on%2$s unless you have Blox installed. Go back to the %3$sPlugins Page%4$s.', 'blox-shortcodes' ), '<em>', '</em>', '<a href="javascript:history.back()">', '</a>' ) );
     }
 
     $blox_version = Blox_Main::get_instance()->version;
 
-    if ( version_compare( $blox_version, '1.3.1', '<' ) ) {
+    if ( version_compare( $blox_version, '1.4.0', '<' ) ) {
         deactivate_plugins( plugin_basename( __FILE__ ) ); // Deactivate plugin
-        wp_die( sprintf( __( 'Sorry, you can\'t activate %1$sShortcodes Positioning Add-on%2$s unless you have Blox v1.3.1+ installed. You are currently running Blox v%3$s. Go back to the %4$sPlugins Page%5$s.', 'blox-shortcodes' ), '<em>', '</em>', $blox_version, '<a href="javascript:history.back()">', '</a>' ) );
+        wp_die( sprintf( __( 'Sorry, you can\'t activate %1$sShortcodes Add-on%2$s unless you have Blox v1.4.0+ installed. You are currently running Blox v%3$s. Go back to the %4$sPlugins Page%5$s.', 'blox-shortcodes' ), '<em>', '</em>', $blox_version, '<a href="javascript:history.back()">', '</a>' ) );
     }
 }
 
@@ -108,7 +108,7 @@ function blox_load_shortcodes_addon() {
 		 *
 		 * @var string
 		 */
-		public $plugin_name = 'Blox - Shortcode Positioning Add-on';
+		public $plugin_name = 'Blox - Shortcodes Add-on';
 
 		/**
 		 * Unique plugin slug identifier.
@@ -397,7 +397,7 @@ function blox_load_shortcodes_addon() {
 
 			// Setup the license
 			if ( class_exists( 'Blox_License' ) ) {
-				$blox_shortcodes_addon_license = new Blox_License( __FILE__, 'Shortcodes Positioning Addon', '1.0.0', 'Nicholas Diego', 'blox_shortcodes_addon_license_key', 'https://www.bloxwp.com', 'addons' );
+				$blox_shortcodes_addon_license = new Blox_License( __FILE__, 'Shortcodes Addon', '1.0.0', 'Nicholas Diego', 'blox_shortcodes_addon_license_key', 'https://www.bloxwp.com', 'addons' );
 			}
 		}
 
@@ -409,7 +409,7 @@ function blox_load_shortcodes_addon() {
 		 */
 		public function notify_of_active_addon( $addons ) {
 
-			$addons['shortcodes_addon'] = __( 'Shortcode Positioning Add-on', 'blox-shortcodes' );
+			$addons['shortcodes_addon'] = __( 'Shortcode Add-on', 'blox-shortcodes' );
 			return $addons;
 		}
 

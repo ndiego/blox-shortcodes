@@ -1,0 +1,60 @@
+# Copyright (C) 2017 Blox - Shortcodes Add-on
+# This file is distributed under the same license as the Blox - Shortcodes Add-on package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Blox - Shortcodes Add-on 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/blox-shortcodes\n"
+"POT-Creation-Date: 2017-01-04 01:48:08+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2017-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: blox-shortcodes.php:45
+msgid "Sorry, you can't activate the %1$sShortcodes Add-on%2$s unless you have Blox installed. Go back to the %3$sPlugins Page%4$s."
+msgstr ""
+
+#: blox-shortcodes.php:52
+msgid "Sorry, you can't activate %1$sShortcodes Add-on%2$s unless you have Blox v1.3.1+ installed. You are currently running Blox v%3$s. Go back to the %4$sPlugins Page%5$s."
+msgstr ""
+
+#: blox-shortcodes.php:287 blox-shortcodes.php:340
+msgid "Shortcode"
+msgstr ""
+
+#: blox-shortcodes.php:292
+msgid "Copy and paste this above shortcode anywhere that accepts a shortcode. Visibility and location settings are respected when using shortcode positioning."
+msgstr ""
+
+#: blox-shortcodes.php:294
+msgid "Also note that regardless of position type, local blocks will %1$sonly%2$s display on the page, post, or custom post type that they were created on."
+msgstr ""
+
+#: blox-shortcodes.php:382
+msgid "Documentation"
+msgstr ""
+
+#: blox-shortcodes.php:412
+msgid "Shortcode Add-on"
+msgstr ""
+#. Plugin Name of the plugin/theme
+msgid "Blox - Shortcodes Add-on"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://www.bloxwp.com"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Enables the Shortcode Add-on for Blox, which enables shortcode positioning"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Nick Diego"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://www.outermost.co"
+msgstr ""

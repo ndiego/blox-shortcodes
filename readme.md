@@ -1,14 +1,14 @@
-## Shortcodes Addon – A premium extension for Blox
+## Shortcodes Add-on – A premium extension for Blox
 
-The Shortcodes Addon is an extension of the premium Wordpress plugin Blox. More information on Blox can be found at [www.bloxwp.com](https://www.bloxwp.com/documentation/?utm_source=blox-shortcodes&utm_medium=plugin&utm_content=github-readme-links&utm_campaign=Blox_Addon_Links). You are free to download and use this extension, but understand that automatic updates and support require a paid Blox license.
+The Shortcodes Add-on is an extension of the premium Wordpress plugin Blox. More information on Blox can be found at [www.bloxwp.com](https://www.bloxwp.com/add-ons/shortcodes?utm_source=blox-shortcodes&utm_medium=plugin&utm_content=github-readme-links&utm_campaign=Blox_Addon_Links). You are free to download and use this extension, but understand that automatic updates and support require a paid Blox license.
 
 **Please Note:** This extension will not work with [Blox Lite](https://wordpress.org/support/plugin/blox-lite), the free version of Blox.
 
 ### Support
 
-There are a number of ways you can get help with the Shortcodes Addon:
+There are a number of ways you can get help with the Shortcodes Add-on:
 
-* Visit the plugin [Documentation](https://www.bloxwp.com/documentation/?utm_source=blox-shortcodes&utm_medium=plugin&utm_content=github-readme-links&utm_campaign=Blox_Plugin_Links).
+* Visit the plugin [Documentation](https://www.bloxwp.com/add-ons/shortcodes?utm_source=blox-shortcodes&utm_medium=plugin&utm_content=github-readme-links&utm_campaign=Blox_Addon_Links).
 * Direct support requires a paid Blox license. Submit a support ticket through [Your Account](https://www.bloxwp.com/your-account/?utm_source=blox-shortcodes&utm_medium=plugin&utm_content=github-readme-links&utm_campaign=Blox_Plugin_Links) on www.bloxwp.com.
 
 ### Find a bug or have a feature request?
@@ -17,5 +17,5 @@ We would love to hear from you! If you find a bug or have a feature request, ple
 
 ### Changelog
 
-##### Version 1.0.0 – 2017-01-02
+##### Version 1.0.0 – 2017-01-04
 * Initial Release

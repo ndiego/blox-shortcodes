@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name: Blox - Shortcodes Add-on
+ * Plugin Name: Blox - Shortcodes Addon
  * Plugin URI:  https://www.bloxwp.com
- * Description: Enables the Shortcode Add-on for Blox, which enables shortcode positioning
+ * Description: Enables the Shortcode Addon for Blox, which enables shortcode positioning
  * Author:      Nick Diego
  * Author URI:  https://www.outermost.co
- * Version:     1.0.0
+ * Version:     1.0.1
  * Text Domain: blox-shortcodes
  * Domain Path: languages
  *
@@ -99,7 +99,7 @@ function blox_load_shortcodes_addon() {
 		 *
 		 * @var string
 		 */
-		public $version = '1.0.0';
+		public $version = '1.0.1';
 
 		/**
 		 * The name of the plugin.
@@ -108,7 +108,7 @@ function blox_load_shortcodes_addon() {
 		 *
 		 * @var string
 		 */
-		public $plugin_name = 'Blox - Shortcodes Add-on';
+		public $plugin_name = 'Blox - Shortcodes Addon';
 
 		/**
 		 * Unique plugin slug identifier.
@@ -150,10 +150,10 @@ function blox_load_shortcodes_addon() {
             // Add shortcode settings
             add_action( 'blox_position_settings', array( $this, 'add_shortcode_settings' ), 10, 4 );
 
-            //
+            // Add shortcode position format
             add_filter( 'blox_position_formats', array( $this, 'add_position_formats' ) );
 
-            //
+            // Add shortcode to global block admin admin column
             add_filter( 'blox_admin_column_output_position', array( $this, 'admin_column_output' ), 10, 4 );
 
             // Add the blox shortcode
@@ -253,10 +253,16 @@ function blox_load_shortcodes_addon() {
             // If the test parameter is still true, proceed with block positioning
             if ( $display_test == true ) {
 
-                // We need to use output buffering here to ensure the slider content is contained in the wrapper div
-                ob_start();
-                blox_frontend_content( null, array( $id, $block, $global ) );
-                $output = ob_get_clean();
+                $output = '';
+
+                // Make sure the function exists before printing the content, causes conflict with some plugins (Yoast SEO Premium)
+                if ( function_exists( 'blox_frontend_content' ) ) {
+
+                    // We need to use output buffering here to ensure the slider content is contained in the wrapper div
+                    ob_start();
+                    blox_frontend_content( null, array( $id, $block, $global ) );
+                    $output = ob_get_clean();
+                }
 
                 return $output;
             }

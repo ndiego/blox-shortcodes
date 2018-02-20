@@ -17,5 +17,8 @@ We would love to hear from you! If you find a bug or have a feature request, ple
 
 ### Changelog
 
+##### Version 1.0.1 – 2018-02-20
+* Fixed conflict with Yoast SEO
+
 ##### Version 1.0.0 – 2017-01-04
 * Initial Release

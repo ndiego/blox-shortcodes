@@ -1,6 +1,6 @@
 # Blox Shortcodes Add-on
 
-The Shortcodes Add-on is an extension of the Wordpress plugin [Blox](https://github.com/ndiego/blox). This extension requires Blox v1.4.0+.
+The Shortcodes Add-on is an extension of the WordPress plugin [Blox](https://github.com/ndiego/blox). This extension requires Blox v1.4.0+.
 
 > **Warning**
 > 
